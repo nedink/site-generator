@@ -47,7 +47,7 @@ button_href: {{booking_url}}
 
 type: cards
 id: services
-theme: light
+theme: dark
 eyebrow: Services
 heading: Services
 intro >>>
@@ -89,6 +89,7 @@ alt:
 
 type: prose
 id: about
+image: about.jpg
 theme: light
 eyebrow: About
 heading: David Bryant
