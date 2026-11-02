@@ -31,16 +31,19 @@
   --light-text   : var(--black);
   --light-muted  : var(--gray-mid);
   --light-border : var(--gray-light);
+  --light-surface: var(--gray-bg);
 
   --gray-bg      : var(--gray-light);
   --gray-text    : var(--black);
   --gray-muted   : var(--gray-mid);
   --gray-border  : #d8d8d6;
+  --gray-surface : var(--gray-bg);
 
   --dark-bg      : var(--black);
   --dark-text    : var(--off-white);
-  --dark-muted   : var(--gray-dark);
+  --dark-muted   : var(--gray-mid);
   --dark-border  : var(--gray-dark);
+  --dark-surface : #1a1a1a;
 
   /* --- Spacing ---
      Section vertical padding scales with viewport width. */
