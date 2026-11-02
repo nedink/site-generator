@@ -126,6 +126,7 @@ type: image-right
 id: about
 theme: light
 image: DanielAbout.jpeg
+alt:
 eyebrow: About
 heading: Daniel Ritchie
 body >>>
