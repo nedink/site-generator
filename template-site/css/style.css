@@ -137,8 +137,15 @@ p {
   padding: var(--section-pad) 0;
 }
 
+/* Each scheme publishes its palette as --section-* vars so cards,
+   buttons, and form fields inside adapt to whatever they sit on. */
+
 /* Light — white background */
 .section--light {
+  --section-bg     : var(--light-bg);
+  --section-text   : var(--light-text);
+  --section-border : var(--light-border);
+  --section-surface: var(--light-surface);
   background: var(--light-bg);
   color: var(--light-text);
 }
@@ -148,6 +155,10 @@ p {
 
 /* Gray — subtle off-white background */
 .section--gray {
+  --section-bg     : var(--gray-bg);
+  --section-text   : var(--gray-text);
+  --section-border : var(--gray-border);
+  --section-surface: var(--gray-surface);
   background: var(--gray-bg);
   color: var(--gray-text);
 }
@@ -157,6 +168,10 @@ p {
 
 /* Dark — black background */
 .section--dark {
+  --section-bg     : var(--dark-bg);
+  --section-text   : var(--dark-text);
+  --section-border : var(--dark-border);
+  --section-surface: var(--dark-surface);
   background: var(--dark-bg);
   color: var(--dark-text);
 }
@@ -484,7 +499,7 @@ p {
   border: 1px solid;
   padding: 2rem;
   border-radius: var(--radius);
-  background: var(--gray-bg);
+  background: var(--section-surface, var(--gray-bg));
 }
 
 .card__price {
@@ -608,6 +623,30 @@ p {
   border-color: var(--black);
 }
 
+/* Scheme-aware — inverts against the enclosing .section--* palette.
+   Prefer these inside sections; the fixed variants above are for
+   always-dark areas like the hero. */
+.btn--solid {
+  background: var(--section-text);
+  color: var(--section-bg);
+  border: 1px solid var(--section-text);
+}
+.btn--solid:hover {
+  background: transparent;
+  color: var(--section-text);
+}
+
+.btn--ghost {
+  background: transparent;
+  color: var(--section-text);
+  border: 1px solid color-mix(in srgb, var(--section-text) 50%, transparent);
+}
+.btn--ghost:hover {
+  background: var(--section-text);
+  color: var(--section-bg);
+  border-color: var(--section-text);
+}
+
 
 /* -------------------------------------------------------------
    10. Forms
@@ -663,7 +702,7 @@ p {
 .section--light .field input:focus,
 .section--light .field select:focus,
 .section--light .field textarea:focus {
-  border-color: var(--black);
+  border-color: var(--section-text);
   outline: none;
 }
 
@@ -686,12 +725,12 @@ p {
 .section--gray .field select,
 .section--gray .field textarea {
   border-color: var(--gray-border);
-  background: var(--white);
+  background: var(--light-bg);
 }
 .section--gray .field input:focus,
 .section--gray .field select:focus,
 .section--gray .field textarea:focus {
-  border-color: var(--black);
+  border-color: var(--section-text);
   outline: none;
 }
 
