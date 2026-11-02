@@ -115,12 +115,6 @@ intro: I examine the condition of its parts and function and provide a report wi
 
 ---
 
-type: banner-image
-image: services.jpg
-alt:
-
----
-
 type: image-right
 id: about
 theme: light
@@ -162,7 +156,7 @@ heading: Contact
 page: contact
 type: contact-form
 theme: light
-message_label: Tell Me About Your Piano (Brand; type–-grand, upright, or spinet; last service date; any issues; serial # or age) 
+message_label: "Tell Me About Your Piano (Brand; type–-grand, upright, or spinet; last service date; any issues; serial # or age)" 
 message_placeholder: What's going on with your piano?
 service_options >>>
 <option value="standard">Standard Tuning</option>
