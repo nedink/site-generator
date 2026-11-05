@@ -6,16 +6,17 @@ produces a full Netlify-ready site from a reusable HTML/CSS scaffold.
 ## Quick start
 
 ```bash
-python generate.py content/bryant.txt --out dist/bryant
-cd dist/bryant && netlify dev
+python generate.py content/bryant.txt --out dist/bryant --watch --serve
 ```
 
-Open the URL Netlify prints (typically http://localhost:8888). If you
-don't have the Netlify CLI, `python -m http.server 8000` also works —
-pretty URLs like `/contact` resolve because pages are written as
-`<stem>/index.html`.
+Open http://localhost:8000. `--watch` rebuilds on every save; `--serve
+[PORT]` serves the output and accepts contact-form submissions, printing
+each one to the terminal and redirecting to the form's `action` page
+(like Netlify Forms does). Pretty URLs like `/contact` resolve because
+pages are written as `<stem>/index.html`.
 
-Pass `--watch` to rebuild on every save.
+`cd dist/bryant && netlify dev` also works for previewing, but it can't
+handle form submissions (they return 405 Method Not Allowed).
 
 ## Repo layout
 
@@ -196,3 +197,11 @@ python generate.py content/<name>.txt --out dist/<name>
 
 with publish directory `dist/<name>/`. `netlify.toml` is copied into
 each output directory automatically.
+
+### Contact form
+
+The contact form uses Netlify Forms. Form detection is off by default
+for new sites, so enable it under **Site configuration → Forms** and
+redeploy, or submissions will land on "Page not found". Submissions
+appear in the Netlify UI under **Forms**. Locally, use `--serve` to test
+the form; `netlify dev` does not handle form submissions.
