@@ -31,15 +31,19 @@ Tokens in templates:
 
 Run:
   python generate.py content/bryant.txt --out dist/bryant
+  python generate.py content/bryant.txt --out dist/bryant --watch --serve
 """
 
 import argparse
 import re
 import shutil
 import sys
+import threading
 import time
-from functools import lru_cache
+from functools import lru_cache, partial
+from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
+from urllib.parse import parse_qsl
 
 
 @lru_cache(maxsize=None)
@@ -504,6 +508,36 @@ def watch_and_build(content_path: Path, tpl_dir: Path, out_dir: Path) -> int:
         return rc
 
 
+class DevHandler(SimpleHTTPRequestHandler):
+    """Static file handler that also accepts Netlify Form posts, which
+    `netlify dev` can't. A POST carrying `form-name` is logged to the
+    terminal and answered with a 303 to the same path, so the browser lands
+    on the form's `action` page just as it would on Netlify."""
+
+    def do_POST(self):
+        length = int(self.headers.get('Content-Length') or 0)
+        body = self.rfile.read(length).decode('utf-8', errors='replace')
+        fields = dict(parse_qsl(body, keep_blank_values=True))
+        form = fields.pop('form-name', None)
+        if not form:
+            self.send_error(404, 'No form-name in submission')
+            return
+        spam = bool(fields.pop('bot-field', ''))
+        print(f"\nform submission: {form}{' (honeypot filled, spam)' if spam else ''}")
+        for k, v in fields.items():
+            print(f"  {k}: {v}")
+        self.send_response(303)
+        self.send_header('Location', self.path)
+        self.end_headers()
+
+
+def serve(out_dir: Path, port: int) -> ThreadingHTTPServer:
+    handler = partial(DevHandler, directory=str(out_dir))
+    server = ThreadingHTTPServer(('127.0.0.1', port), handler)
+    print(f"serving {out_dir}/ at http://localhost:{port}")
+    return server
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.split('\n')[1])
     ap.add_argument('content', help='path to the content file')
@@ -512,15 +546,34 @@ def main() -> int:
                     help='path to template directory (default: ./template-site)')
     ap.add_argument('--watch', action='store_true',
                     help='rebuild on file change until interrupted')
+    ap.add_argument('--serve', type=int, nargs='?', const=8000, metavar='PORT',
+                    help='serve the output locally, accepting contact-form '
+                         'posts (default port: 8000)')
     args = ap.parse_args()
 
     content_path = Path(args.content)
     tpl_dir = Path(args.templates)
     out_dir = Path(args.out)
 
+    if args.serve is None:
+        if args.watch:
+            return watch_and_build(content_path, tpl_dir, out_dir)
+        return build(content_path, tpl_dir, out_dir)
+
     if args.watch:
+        # watch_and_build does the initial build before blocking.
+        server = serve(out_dir, args.serve)
+        threading.Thread(target=server.serve_forever, daemon=True).start()
         return watch_and_build(content_path, tpl_dir, out_dir)
-    return build(content_path, tpl_dir, out_dir)
+    rc = build(content_path, tpl_dir, out_dir)
+    if rc:
+        return rc
+    server = serve(out_dir, args.serve)
+    try:
+        server.serve_forever()
+    except KeyboardInterrupt:
+        print("\nstopped.")
+    return 0
 
 
 if __name__ == '__main__':
