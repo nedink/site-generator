@@ -10,7 +10,7 @@ business_name: Bryant Piano Service
 owner_name: David Bryant
 location: Cambridge, MA
 service_area: Boston, Cambridge, Somerville, MA
-email: dbryant5598@gmail.com
+email: david@bryantpiano.com
 phone: 6177105598
 booking_url: https://gazelleapp.io/scheduling/9RZL3PMt2mm32mnJ4fjXTSyx
 year: 2026
